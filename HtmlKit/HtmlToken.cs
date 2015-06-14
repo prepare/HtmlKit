@@ -68,7 +68,7 @@ namespace HtmlKit {
 	/// <remarks>
 	/// An HTML comment token.
 	/// </remarks>
-	public sealed class HtmlCommentToken : HtmlToken
+	public class HtmlCommentToken : HtmlToken
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="HtmlKit.HtmlCommentToken"/> class.
@@ -118,7 +118,7 @@ namespace HtmlKit {
 	/// <remarks>
 	/// An HTML token consisting of character data.
 	/// </remarks>
-	public sealed class HtmlDataToken : HtmlToken
+	public class HtmlDataToken : HtmlToken
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="HtmlKit.HtmlDataToken"/> class.
@@ -168,7 +168,7 @@ namespace HtmlKit {
 	/// <remarks>
 	/// An HTML tag token.
 	/// </remarks>
-	public sealed class HtmlTagToken : HtmlToken
+	public class HtmlTagToken : HtmlToken
 	{
 		/// <summary>
 		/// Initializes a new instance of the <see cref="HtmlKit.HtmlTagToken"/> class.
@@ -194,6 +194,7 @@ namespace HtmlKit {
 
 			Attributes = new HtmlAttributeCollection (attributes);
 			IsEmptyElement = isEmptyElement;
+			Id = name.ToHtmlTagId ();
 			Name = name;
 		}
 
@@ -214,6 +215,7 @@ namespace HtmlKit {
 				throw new ArgumentNullException ("name");
 
 			Attributes = new HtmlAttributeCollection ();
+			Id = name.ToHtmlTagId ();
 			IsEndTag = isEndTag;
 			Name = name;
 		}
@@ -226,6 +228,17 @@ namespace HtmlKit {
 		/// </remarks>
 		/// <value>The attributes.</value>
 		public HtmlAttributeCollection Attributes {
+			get; private set;
+		}
+
+		/// <summary>
+		/// Get the HTML tag identifier.
+		/// </summary>
+		/// <remarks>
+		/// Gets the HTML tag identifier.
+		/// </remarks>
+		/// <value>The HTML tag identifier.</value>
+		public HtmlTagId Id {
 			get; private set;
 		}
 
@@ -301,8 +314,23 @@ namespace HtmlKit {
 	/// <remarks>
 	/// An HTML DOCTYPE token.
 	/// </remarks>
-	public sealed class HtmlDocTypeToken : HtmlToken
+	public class HtmlDocTypeToken : HtmlToken
 	{
+		string publicIdentifier;
+		string systemIdentifier;
+		string tagName;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="HtmlKit.HtmlDocTypeToken"/> class.
+		/// </summary>
+		/// <remarks>
+		/// Creates a new <see cref="HtmlDocTypeToken"/>.
+		/// </remarks>
+		internal HtmlDocTypeToken (string doctype) : base (HtmlTokenKind.DocType)
+		{
+			tagName = doctype;
+		}
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="HtmlKit.HtmlDocTypeToken"/> class.
 		/// </summary>
@@ -311,6 +339,7 @@ namespace HtmlKit {
 		/// </remarks>
 		public HtmlDocTypeToken () : base (HtmlTokenKind.DocType)
 		{
+			tagName = "DOCTYPE";
 		}
 
 		/// <summary>
@@ -343,7 +372,28 @@ namespace HtmlKit {
 		/// </remarks>
 		/// <value>The public identifier.</value>
 		public string PublicIdentifier {
-			get; set;
+			get { return publicIdentifier; }
+			set {
+				publicIdentifier = value;
+				if (value != null) {
+					if (PublicKeyword == null)
+						PublicKeyword = "PUBLIC";
+				} else {
+					if (systemIdentifier != null)
+						SystemKeyword = "SYSTEM";
+				}
+			}
+		}
+
+		/// <summary>
+		/// Get the public keyword that was used.
+		/// </summary>
+		/// <remarks>
+		/// Gets the public keyword that was used.
+		/// </remarks>
+		/// <value>The public keyword or <c>null</c> if it wasn't used.</value>
+		public string PublicKeyword {
+			get; internal set;
 		}
 
 		/// <summary>
@@ -354,7 +404,27 @@ namespace HtmlKit {
 		/// </remarks>
 		/// <value>The system identifier.</value>
 		public string SystemIdentifier {
-			get; set;
+			get { return systemIdentifier; }
+			set {
+				systemIdentifier = value;
+				if (value != null) {
+					if (publicIdentifier == null && SystemKeyword == null)
+						SystemKeyword = "SYSTEM";
+				} else {
+					SystemKeyword = null;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Get the system keyword that was used.
+		/// </summary>
+		/// <remarks>
+		/// Gets the system keyword that was used.
+		/// </remarks>
+		/// <value>The system keyword or <c>null</c> if it wasn't used.</value>
+		public string SystemKeyword {
+			get; internal set;
 		}
 
 		/// <summary>
@@ -368,13 +438,16 @@ namespace HtmlKit {
 		{
 			var encoded = new StringBuilder ();
 
-			encoded.Append ("<!DOCTYPE");
+			encoded.Append ("<!");
+			encoded.Append (tagName);
 			if (Name != null) {
 				encoded.Append (' ');
 				encoded.Append (Name);
 			}
 			if (PublicIdentifier != null) {
-				encoded.Append (" PUBLIC \"");
+				encoded.Append (' ');
+				encoded.Append (PublicKeyword);
+				encoded.Append (" \"");
 				encoded.Append (PublicIdentifier);
 				encoded.Append ('"');
 				if (SystemIdentifier != null) {
@@ -383,7 +456,9 @@ namespace HtmlKit {
 					encoded.Append ('"');
 				}
 			} else if (SystemIdentifier != null) {
-				encoded.Append (" SYSTEM \"");
+				encoded.Append (' ');
+				encoded.Append (SystemKeyword);
+				encoded.Append (" \"");
 				encoded.Append (SystemIdentifier);
 				encoded.Append ('"');
 			}
