@@ -325,7 +325,6 @@ namespace HtmlKit {
 			if (output == null)
 				throw new ArgumentNullException ("output");
 
-			// FIXME: properly encode/escape the script data
 			output.Write (Data);
 		}
 	}
@@ -467,7 +466,7 @@ namespace HtmlKit {
 				output.Write (Attributes[i].Name);
 				if (Attributes[i].Value != null) {
 					output.Write ('=');
-					HtmlUtils.HtmlEncodeAttribute (output, Attributes[i].Value);
+					HtmlUtils.HtmlAttributeEncode (output, Attributes[i].Value);
 				}
 			}
 			if (IsEmptyElement)
