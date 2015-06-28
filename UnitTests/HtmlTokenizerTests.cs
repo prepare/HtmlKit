@@ -79,12 +79,12 @@ namespace UnitTests {
 							switch (text.Data[i]) {
 							case '\f': actual.Append ("\\f"); break;
 							case '\t': actual.Append ("\\t"); break;
-							case '\r': actual.Append ("\\r"); break;
+							case '\r': break;
 							case '\n': actual.Append ("\\n"); break;
 							default: actual.Append (text.Data[i]); break;
 							}
 						}
-						actual.AppendLine ();
+						actual.Append ('\n');
 						break;
 					case HtmlTokenKind.Tag:
 						var tag = (HtmlTagToken) token;
@@ -100,11 +100,12 @@ namespace UnitTests {
 
 						actual.Append (tag.IsEmptyElement ? "/>" : ">");
 
-						actual.AppendLine ();
+						actual.Append ('\n');
 						break;
 					case HtmlTokenKind.Comment:
 						var comment = (HtmlCommentToken) token;
-						actual.AppendLine (comment.Comment);
+						actual.Append (comment.Comment);
+						actual.Append ('\n');
 						break;
 					case HtmlTokenKind.DocType:
 						var doctype = (HtmlDocTypeToken) token;
@@ -126,7 +127,7 @@ namespace UnitTests {
 						}
 
 						actual.Append (">");
-						actual.AppendLine ();
+						actual.Append ('\n');
 						break;
 					default:
 						Assert.Fail ("Unhandled token type: {0}", token.Kind);
@@ -156,6 +157,18 @@ namespace UnitTests {
 		}
 
 		[Test]
+		public void TestPapercut ()
+		{
+			VerifyHtmlTokenizerOutput (Path.Combine ("..", "..", "TestData", "html", "papercut.html"));
+		}
+
+		[Test]
+		public void TestPapercut44 ()
+		{
+			VerifyHtmlTokenizerOutput (Path.Combine ("..", "..", "TestData", "html", "papercut-4.4.html"));
+		}
+
+		[Test]
 		public void TestTokenizer ()
 		{
 			VerifyHtmlTokenizerOutput (Path.Combine ("..", "..", "TestData", "html", "test.html"));
@@ -170,6 +183,16 @@ namespace UnitTests {
 			var decoded = HtmlUtils.HtmlDecode (encoded);
 
 			Assert.AreEqual (expected, decoded);
+		}
+
+		[Test]
+		public void TestHtmlNamespaces ()
+		{
+			foreach (HtmlNamespace ns in Enum.GetValues (typeof (HtmlNamespace))) {
+				var value = ns.ToNamespaceUrl ().ToHtmlNamespace ();
+
+				Assert.AreEqual (ns, value);
+			}
 		}
 	}
 }
