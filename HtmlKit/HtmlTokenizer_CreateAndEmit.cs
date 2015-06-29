@@ -60,9 +60,9 @@ namespace HtmlKit
         /// </remarks>
         /// <returns>The HTML comment token.</returns>
         /// <param name="comment">The comment.</param>
-        protected virtual HtmlCommentToken CreateCommentToken(string comment)
+        protected virtual HtmlCommentToken CreateCommentToken(string comment, bool bogus = false)
         {
-            return new HtmlCommentToken(comment);
+            return new HtmlCommentToken(comment, bogus);
         }
 
         /// <summary>
@@ -147,9 +147,9 @@ namespace HtmlKit
             attribute = CreateAttribute(ClearNameBuffer());
             tag.Attributes.Add(attribute);
         }
-        void EmitCommentToken(string comment)
+        void EmitCommentToken(string comment, bool bogus = false)
         {
-            SetEmitToken(CreateCommentToken(comment));
+            SetEmitToken(CreateCommentToken(comment, bogus));
             data.Length = 0;
             name.Length = 0;
         }
@@ -169,6 +169,7 @@ namespace HtmlKit
                 data.Length = 0;
             }
         }
+       
         void EmitCDataToken()
         {
             if (data.Length > 0)

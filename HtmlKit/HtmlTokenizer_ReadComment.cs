@@ -40,11 +40,17 @@ namespace HtmlKit
 
             char c;
 
-            if (data.Length > 0)
+            if (data.Length > 0 && data[0] == '<')
             {
-                c = data[data.Length - 1];
-                data.Length = 1;
-                data[0] = c;
+                //strip the leading '<' but leave the rest
+
+                var buf = data.ToString();
+                for (int i = 1; i < data.Length; ++i)
+                {
+                    data[i - 1] = data[i];
+                }
+                data.Length--;
+
             }
 
             while (ReadNext(out c))
@@ -52,7 +58,8 @@ namespace HtmlKit
                 switch (c)
                 {
                     case '>':
-                        EmitCommentToken(data.ToString());
+                        TokenizerState = HtmlTokenizerState.s01_Data;
+                        EmitCommentToken(data.ToString(), true);
                         return;
                     case '\0':
                         c = '\uFFFD';
@@ -164,11 +171,13 @@ namespace HtmlKit
                         return;
                     }
 
+                    // Note: we save the data in case we hit a parse error and have to emit a data token
+                    data.Append(c);
+
                     if (c != CData[count])
                         break;
 
-                    // Note: we save the data in case we hit a parse error and have to emit a data token
-                    data.Append(c);
+
                     count++;
                 }
 

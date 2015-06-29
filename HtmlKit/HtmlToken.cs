@@ -59,7 +59,8 @@ namespace HtmlKit
         /// <value>The kind of token.</value>
         public HtmlTokenKind Kind
         {
-            get; private set;
+            get;
+            private set;
         }
 
         /// <summary>
@@ -107,14 +108,17 @@ namespace HtmlKit
         /// Creates a new <see cref="HtmlCommentToken"/>.
         /// </remarks>
         /// <param name="comment">The comment text.</param>
+        /// <param name="bogus"><c>true</c> if the comment is bogus; otherwise, <c>false</c>.</param>
         /// <exception cref="System.ArgumentNullException">
         /// <paramref name="comment"/> is <c>null</c>.
         /// </exception>
-        public HtmlCommentToken(string comment) : base(HtmlTokenKind.Comment)
+        public HtmlCommentToken(string comment, bool bogus = false)
+            : base(HtmlTokenKind.Comment)
         {
             if (comment == null)
                 throw new ArgumentNullException("comment");
 
+            IsBogusComment = bogus;
             Comment = comment;
         }
 
@@ -127,7 +131,18 @@ namespace HtmlKit
         /// <value>The comment.</value>
         public string Comment
         {
-            get; internal set;
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Get whether or not the comment is a bogus comment.
+        /// </summary>
+        /// <value><c>true</c> if the comment is bogus; otherwise, <c>false</c>.</value>
+        public bool IsBogusComment
+        {
+            get;
+            private set;
         }
 
         /// <summary>
@@ -145,9 +160,18 @@ namespace HtmlKit
             if (output == null)
                 throw new ArgumentNullException("output");
 
-            output.Write("<!--");
-            output.Write(Comment);
-            output.Write("-->");
+            if (!IsBogusComment)
+            {
+                output.Write("<!--");
+                output.Write(Comment);
+                output.Write("-->");
+            }
+            else
+            {
+                output.Write('<');
+                output.Write(Comment);
+                output.Write('>');
+            }
         }
     }
 
@@ -173,7 +197,8 @@ namespace HtmlKit
         /// <exception cref="System.ArgumentNullException">
         /// <paramref name="data"/> is <c>null</c>.
         /// </exception>
-        protected HtmlDataToken(HtmlTokenKind kind, string data) : base(kind)
+        protected HtmlDataToken(HtmlTokenKind kind, string data)
+            : base(kind)
         {
             switch (kind)
             {
@@ -200,7 +225,8 @@ namespace HtmlKit
         /// <exception cref="System.ArgumentNullException">
         /// <paramref name="data"/> is <c>null</c>.
         /// </exception>
-        public HtmlDataToken(string data) : base(HtmlTokenKind.Data)
+        public HtmlDataToken(string data)
+            : base(HtmlTokenKind.Data)
         {
             if (data == null)
                 throw new ArgumentNullException("data");
@@ -210,7 +236,8 @@ namespace HtmlKit
 
         internal bool EncodeEntities
         {
-            get; set;
+            get;
+            set;
         }
 
         /// <summary>
@@ -222,7 +249,8 @@ namespace HtmlKit
         /// <value>The character data.</value>
         public string Data
         {
-            get; private set;
+            get;
+            private set;
         }
 
         /// <summary>
@@ -269,7 +297,8 @@ namespace HtmlKit
         /// <exception cref="System.ArgumentNullException">
         /// <paramref name="data"/> is <c>null</c>.
         /// </exception>
-        public HtmlCDataToken(string data) : base(HtmlTokenKind.CData, data)
+        public HtmlCDataToken(string data)
+            : base(HtmlTokenKind.CData, data)
         {
         }
 
@@ -313,7 +342,8 @@ namespace HtmlKit
         /// <exception cref="System.ArgumentNullException">
         /// <paramref name="data"/> is <c>null</c>.
         /// </exception>
-        public HtmlScriptDataToken(string data) : base(HtmlTokenKind.ScriptData, data)
+        public HtmlScriptDataToken(string data)
+            : base(HtmlTokenKind.ScriptData, data)
         {
         }
 
@@ -333,7 +363,6 @@ namespace HtmlKit
             if (output == null)
                 throw new ArgumentNullException("output");
 
-            // FIXME: properly encode/escape the script data
             output.Write(Data);
         }
     }
@@ -360,7 +389,8 @@ namespace HtmlKit
         /// <para>-or-</para>
         /// <para><paramref name="attributes"/> is <c>null</c>.</para>
         /// </exception>
-        public HtmlTagToken(string name, IEnumerable<HtmlAttribute> attributes, bool isEmptyElement) : base(HtmlTokenKind.Tag)
+        public HtmlTagToken(string name, IEnumerable<HtmlAttribute> attributes, bool isEmptyElement)
+            : base(HtmlTokenKind.Tag)
         {
             if (name == null)
                 throw new ArgumentNullException("name");
@@ -385,7 +415,8 @@ namespace HtmlKit
         /// <exception cref="System.ArgumentNullException">
         /// <paramref name="name"/> is <c>null</c>.
         /// </exception>
-        public HtmlTagToken(string name, bool isEndTag) : base(HtmlTokenKind.Tag)
+        public HtmlTagToken(string name, bool isEndTag)
+            : base(HtmlTokenKind.Tag)
         {
             if (name == null)
                 throw new ArgumentNullException("name");
@@ -405,7 +436,8 @@ namespace HtmlKit
         /// <value>The attributes.</value>
         public HtmlAttributeCollection Attributes
         {
-            get; private set;
+            get;
+            private set;
         }
 
         /// <summary>
@@ -417,7 +449,8 @@ namespace HtmlKit
         /// <value>The HTML tag identifier.</value>
         public HtmlTagId Id
         {
-            get; private set;
+            get;
+            private set;
         }
 
         /// <summary>
@@ -429,7 +462,8 @@ namespace HtmlKit
         /// <value><c>true</c> if the tag is an empty element; otherwise, <c>false</c>.</value>
         public bool IsEmptyElement
         {
-            get; internal set;
+            get;
+            internal set;
         }
 
         /// <summary>
@@ -441,7 +475,8 @@ namespace HtmlKit
         /// <value><c>true</c> if the tag is an end tag; otherwise, <c>false</c>.</value>
         public bool IsEndTag
         {
-            get; private set;
+            get;
+            private set;
         }
 
         /// <summary>
@@ -453,7 +488,8 @@ namespace HtmlKit
         /// <value>The name.</value>
         public string Name
         {
-            get; private set;
+            get;
+            private set;
         }
 
         /// <summary>
@@ -508,14 +544,16 @@ namespace HtmlKit
         /// <remarks>
         /// Creates a new <see cref="HtmlDocTypeToken"/>.
         /// </remarks>
-        public HtmlDocTypeToken() : base(HtmlTokenKind.DocType)
+        public HtmlDocTypeToken()
+            : base(HtmlTokenKind.DocType)
         {
             RawTagName = "DOCTYPE";
         }
 
         internal string RawTagName
         {
-            get; set;
+            get;
+            set;
         }
 
         /// <summary>
@@ -527,7 +565,8 @@ namespace HtmlKit
         /// <value><c>true</c> if quirks-mode should be forced; otherwise, <c>false</c>.</value>
         public bool ForceQuirksMode
         {
-            get; set;
+            get;
+            set;
         }
 
         /// <summary>
@@ -539,7 +578,8 @@ namespace HtmlKit
         /// <value>The name.</value>
         public string Name
         {
-            get; set;
+            get;
+            set;
         }
 
         /// <summary>
@@ -577,7 +617,8 @@ namespace HtmlKit
         /// <value>The public keyword or <c>null</c> if it wasn't used.</value>
         public string PublicKeyword
         {
-            get; internal set;
+            get;
+            internal set;
         }
 
         /// <summary>
@@ -614,7 +655,8 @@ namespace HtmlKit
         /// <value>The system keyword or <c>null</c> if it wasn't used.</value>
         public string SystemKeyword
         {
-            get; internal set;
+            get;
+            internal set;
         }
 
         /// <summary>
