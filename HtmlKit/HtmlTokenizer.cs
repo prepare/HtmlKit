@@ -158,9 +158,10 @@ namespace HtmlKit {
 		/// </remarks>
 		/// <returns>The HTML comment token.</returns>
 		/// <param name="comment">The comment.</param>
-		protected virtual HtmlCommentToken CreateCommentToken (string comment)
+		/// <param name="bogus"><c>true</c> if the comment is bogus; otherwise, <c>false</c>.</param>
+		protected virtual HtmlCommentToken CreateCommentToken (string comment, bool bogus = false)
 		{
-			return new HtmlCommentToken (comment);
+			return new HtmlCommentToken (comment, bogus);
 		}
 
 		/// <summary>
@@ -287,17 +288,17 @@ namespace HtmlKit {
 			name.Length = 0;
 		}
 
-		HtmlToken EmitCommentToken (string comment)
+		HtmlToken EmitCommentToken (string comment, bool bogus = false)
 		{
-			var token = CreateCommentToken (comment);
+			var token = CreateCommentToken (comment, bogus);
 			data.Length = 0;
 			name.Length = 0;
 			return token;
 		}
 
-		HtmlToken EmitCommentToken (StringBuilder comment)
+		HtmlToken EmitCommentToken (StringBuilder comment, bool bogus = false)
 		{
-			return EmitCommentToken (comment.ToString ());
+			return EmitCommentToken (comment.ToString (), bogus);
 		}
 
 		HtmlToken EmitDocType ()
@@ -1502,7 +1503,7 @@ namespace HtmlKit {
 					// parse error
 					goto default;
 				default:
-					TokenizerState = HtmlTokenizerState.AttributeName;
+					TokenizerState = HtmlTokenizerState.AttributeValueUnquoted;
 					name.Append (c == '\0' ? '\uFFFD' : c);
 					return null;
 				}
@@ -1574,16 +1575,14 @@ namespace HtmlKit {
 					TokenizerState = HtmlTokenizerState.CharacterReferenceInAttributeValue;
 					return null;
 				case '>':
+					attribute.Value = name.ToString ();
+					name.Length = 0;
+
 					return EmitTagToken ();
 				case '\'': case '<': case '=': case '`':
 					// parse error
 					goto default;
 				default:
-					if (c == quote) {
-						TokenizerState = HtmlTokenizerState.AfterAttributeValueQuoted;
-						break;
-					}
-
 					name.Append (c == '\0' ? '\uFFFD' : c);
 					break;
 				}
@@ -1687,10 +1686,12 @@ namespace HtmlKit {
 			switch (c) {
 			case '\t': case '\r': case '\n': case '\f': case ' ':
 				TokenizerState = HtmlTokenizerState.BeforeAttributeName;
+				data.Append (c);
 				consume = true;
 				break;
 			case '/':
 				TokenizerState = HtmlTokenizerState.SelfClosingStartTag;
+				data.Append (c);
 				consume = true;
 				break;
 			case '>':
@@ -1741,10 +1742,12 @@ namespace HtmlKit {
 			int nc;
 			char c;
 
-			if (data.Length > 0) {
-				c = data[data.Length - 1];
-				data.Length = 1;
-				data[0] = c;
+			if (data.Length > 0 && data[0] == '<') {
+				// strip the leading '<' but leave the rest
+				var buf = data.ToString ();
+				for (int i = 1; i < data.Length; i++)
+					data[i - 1] = data[i];
+				data.Length--;
 			}
 
 			do {
@@ -1759,7 +1762,9 @@ namespace HtmlKit {
 				data.Append (c == '\0' ? '\uFFFD' : c);
 			} while (true);
 
-			return EmitCommentToken (data);
+			TokenizerState = HtmlTokenizerState.Data;
+
+			return EmitCommentToken (data, true);
 		}
 
 		HtmlToken ReadMarkupDeclarationOpen ()
@@ -1836,11 +1841,14 @@ namespace HtmlKit {
 						return EmitDataToken (false);
 					}
 
-					if ((c = (char) nc) != CData[count])
-						break;
+					c = (char) nc;
 
 					// Note: we save the data in case we hit a parse error and have to emit a data token
 					data.Append (c);
+
+					if (c != CData[count])
+						break;
+
 					count++;
 				}
 

@@ -30,15 +30,18 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="nunit.framework">
-      <HintPath>..\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+      <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HtmlTokenizerTests.cs" />
+    <Compile Include="HtmlEntityDecoderTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="TestData\html\blocked.html" />
     <None Include="TestData\html\blocked.tokens" />
     <None Include="TestData\html\test.html" />
@@ -46,6 +49,14 @@
     <None Include="TestData\html\xamarin3.html" />
     <None Include="TestData\html\xamarin3.tokens" />
     <None Include="TestData\html\xamarin3.xhtml" />
+    <None Include="TestData\html\papercut.html" />
+    <None Include="TestData\html\papercut.tokens" />
+    <None Include="TestData\html\papercut-4.4.html" />
+    <None Include="TestData\html\papercut-4.4.tokens" />
+    <None Include="packages.config" />
+    <None Include="TestData\html\HtmlEntities.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HtmlKit\HtmlKit.csproj">
