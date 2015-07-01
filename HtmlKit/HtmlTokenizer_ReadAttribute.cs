@@ -58,7 +58,7 @@ namespace HtmlKit
                     case '\'':
                     case '<':
                     case '=':
-                        // parse error
+                        ParseError();// parse error
                         goto default;
                     case '\0':
                         c = '\uFFFD';
@@ -156,7 +156,7 @@ namespace HtmlKit
                     case '"':
                     case '\'':
                     case '<':
-                        // parse error
+                        ParseError();// parse error
                         goto default;
                     case '\0':
                         c = '\uFFFD';
@@ -210,7 +210,7 @@ namespace HtmlKit
                     case '<':
                     case '=':
                     case '`':
-                        // parse error
+                        ParseError();// parse error
                         goto default;
                     case '\0':
                         c = '\uFFFD';
@@ -301,7 +301,7 @@ namespace HtmlKit
                     case '<':
                     case '=':
                     case '`':
-                        // parse error
+                        ParseError();// parse error
                         goto default;
                     case '\0':
                         c = '\uFFFD';

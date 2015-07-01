@@ -24,7 +24,7 @@
 // THE SOFTWARE.
 //
 
-     
+
 
 namespace HtmlKit
 {
@@ -47,7 +47,7 @@ namespace HtmlKit
                         {
                             TokenizerState = HtmlTokenizerState.s02_CharacterReferenceInData;
                             return;
-                        } 
+                        }
                         goto default;
                     case '<':
                         TokenizerState = HtmlTokenizerState.s08_TagOpen;
@@ -71,7 +71,7 @@ namespace HtmlKit
 
             //eof
             TokenizerState = HtmlTokenizerState.EndOfFile;
-            EmitDataToken(DecodeCharacterReferences); 
+            EmitDataToken(DecodeCharacterReferences);
         }
 
         /// <summary>
@@ -136,8 +136,8 @@ namespace HtmlKit
                 default:
                     TokenizerState = HtmlTokenizerState.s44_BogusComment;
                     return;
-                case CharMode.Gt:// parse error
-                    TokenizerState = HtmlTokenizerState.s01_Data;
+                case CharMode.Gt:
+                    ParseError(HtmlTokenizerState.s01_Data);// parse error                     
                     data.Length = 0;
                     break;
                 case CharMode.UpperAsciiLetter:
@@ -148,8 +148,6 @@ namespace HtmlKit
                     break;
             }
 
-
-
         }
         /// <summary>
         /// 8.2.4.10 Tag name state
@@ -159,11 +157,11 @@ namespace HtmlKit
         {
             char c;
             CharMode charMode;
-            while(ReadNext(out c,out charMode ))
+            while (ReadNext(out c, out charMode))
             {
 
                 // Note: we save the data in case we hit a parse error and have to emit a data token
-                data.Append(c); 
+                data.Append(c);
                 switch (charMode)
                 {
                     case CharMode.NewLine:
@@ -193,7 +191,7 @@ namespace HtmlKit
             //eof
             TokenizerState = HtmlTokenizerState.EndOfFile;
             name.Length = 0;
-            EmitDataToken(); 
+            EmitDataToken();
         }
         /// <summary>
         /// 8.2.4.43 Self-closing start tag state
@@ -217,11 +215,16 @@ namespace HtmlKit
                 return;
             }
 
-            // parse error
-            TokenizerState = HtmlTokenizerState.s34_BeforeAttributeName;
+            ParseError(HtmlTokenizerState.s34_BeforeAttributeName);// parse error  
             // Note: we save the data in case we hit a parse error and have to emit a data token
             data.Append(c);
         }
-
+        void ParseError(HtmlTokenizerState switchToState)
+        {   
+            TokenizerState = switchToState;
+        }
+        void ParseError()
+        { 
+        }
     }
 }

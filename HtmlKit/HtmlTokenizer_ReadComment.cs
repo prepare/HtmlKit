@@ -114,9 +114,8 @@ namespace HtmlKit
             }
 
             if (count == 1)
-            {
-                // parse error
-                TokenizerState = HtmlTokenizerState.s44_BogusComment;
+            {  
+                ParseError(HtmlTokenizerState.s44_BogusComment);// parse error 
                 return;
             }
 
@@ -188,10 +187,8 @@ namespace HtmlKit
                 }
             }
 
-            // parse error
-            TokenizerState = HtmlTokenizerState.s44_BogusComment;
-
-
+             
+            ParseError(HtmlTokenizerState.s44_BogusComment);// parse error  
         }
         /// <summary>
         /// 8.2.4.46 Comment start state
@@ -216,15 +213,15 @@ namespace HtmlKit
                 case '-':
                     TokenizerState = HtmlTokenizerState.s47_CommentStartDash;
                     break;
-                case '>': // parse error
-                    TokenizerState = HtmlTokenizerState.s01_Data;
+                case '>':
+                    ParseError(HtmlTokenizerState.s01_Data);// parse error 
                     EmitCommentToken(string.Empty);
                     return;
                 case '\0':
                     c = '\uFFFD';
                     goto default;
-                default: // parse error
-                    TokenizerState = HtmlTokenizerState.s48_Comment;
+                default:
+                    ParseError(HtmlTokenizerState.s48_Comment);// parse  
                     name.Append(c);
                     break;
             }
@@ -251,15 +248,15 @@ namespace HtmlKit
                 case '-':
                     TokenizerState = HtmlTokenizerState.s50_CommentEnd;
                     break;
-                case '>': // parse error
-                    TokenizerState = HtmlTokenizerState.s01_Data;
+                case '>':
+                    ParseError(HtmlTokenizerState.s01_Data);// parse error 
                     EmitCommentTokenFromNameBuffer();
                     return;
                 case '\0':
                     c = '\uFFFD';
                     goto default;
-                default: // parse error
-                    TokenizerState = HtmlTokenizerState.s48_Comment;
+                default:
+                    ParseError(HtmlTokenizerState.s48_Comment);// parse error 
                     name.Append('-');
                     name.Append(c);
                     break;
@@ -321,15 +318,15 @@ namespace HtmlKit
                 case '-':
                     TokenizerState = HtmlTokenizerState.s50_CommentEnd;
                     break;
-                case '>': // parse error
-                    TokenizerState = HtmlTokenizerState.s01_Data;
+                case '>':
+                    ParseError(HtmlTokenizerState.s01_Data);// parse error 
                     EmitCommentTokenFromNameBuffer();
                     return;
                 case '\0':
                     c = '\uFFFD';
                     goto default;
-                default: // parse error
-                    TokenizerState = HtmlTokenizerState.s48_Comment;
+                default:
+                    ParseError(HtmlTokenizerState.s48_Comment);// parse error 
                     name.Append('-');
                     name.Append(c);
                     break;
@@ -353,8 +350,8 @@ namespace HtmlKit
                         TokenizerState = HtmlTokenizerState.s01_Data;
                         EmitCommentTokenFromNameBuffer();
                         return;
-                    case '!': // parse error
-                        TokenizerState = HtmlTokenizerState.s51_CommentEndBang;
+                    case '!':
+                        ParseError(HtmlTokenizerState.s51_CommentEndBang);// parse error 
                         return;
                     case '-':
                         name.Append('-');
@@ -403,8 +400,8 @@ namespace HtmlKit
                 case '\0':
                     c = '\uFFFD';
                     goto default;
-                default: // parse error
-                    TokenizerState = HtmlTokenizerState.s48_Comment;
+                default:
+                    ParseError(HtmlTokenizerState.s48_Comment);// parse error 
                     name.Append("--!");
                     name.Append(c);
                     break;
