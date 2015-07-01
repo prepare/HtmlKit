@@ -33,8 +33,10 @@ namespace HtmlKit
             char c;
             if (!Peek(out c))
             {
-                //?
+                //eof
                 throw new System.NotSupportedException();
+                TokenizerState = HtmlTokenizerState.EndOfFile;
+                return;
             }
 
             data.Append('<');
@@ -109,8 +111,7 @@ namespace HtmlKit
                         {
                             TokenizerState = HtmlTokenizerState.s34_BeforeAttributeName;
                             break;
-                        }
-
+                        } 
                         goto default;
                     case '/':
                         if (NameIs(activeTagName))
@@ -132,6 +133,8 @@ namespace HtmlKit
                         switch (charMode)
                         {
                             //TODO: review here
+                            //when we found close tag that not match with activeTagName
+
                             default://if (!IsAsciiLetter(c))
                                 TokenizerState = rawTextState;
                                 return;
@@ -212,7 +215,7 @@ namespace HtmlKit
         {
             ReadCharacterReference(HtmlTokenizerState.s03_RcData);
 
-        } 
+        }
         /// <summary>
         /// 8.2.4.5 RAWTEXT state
         /// <see cref="http://www.w3.org/TR/html5/syntax.html#rawtext-state"/> 
@@ -245,8 +248,8 @@ namespace HtmlKit
             }
 
             //eof
-            TokenizerState = HtmlTokenizerState.EndOfFile; 
-            EmitDataToken(); 
+            TokenizerState = HtmlTokenizerState.EndOfFile;
+            EmitDataToken();
         }
 
 
