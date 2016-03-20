@@ -58,11 +58,14 @@ namespace HtmlKit {
 		static int IndexOfHtmlEncodeAttributeChar (ICharArray value, int startIndex, int endIndex, char quote)
 		{
 			for (int i = startIndex; i < endIndex; i++) {
-				switch (value[i]) {
+				char c = value[i];
+
+				switch (c) {
+				case '\t': case '\r': case '\n': case '\f': break;
 				case '&': case '<': case '>':
 					return i;
 				default:
-					if (value[i] == quote)
+					if (c == quote || c < 32 || c >= 127)
 						return i;
 					break;
 				}
@@ -91,7 +94,7 @@ namespace HtmlKit {
 
 			while (index < endIndex) {
 				char c = value[index++];
-				int unichar, nextIndex;
+				int unichar;
 
 				switch (c) {
 				case '\t': case '\r': case '\n': case '\f': output.Write (c); break;
@@ -125,14 +128,6 @@ namespace HtmlKit {
 					output.Write (string.Format (CultureInfo.InvariantCulture, "&#{0};", unichar));
 					break;
 				}
-
-				if (index >= endIndex)
-					break;
-
-				if ((nextIndex = IndexOfHtmlEncodeAttributeChar (value, index, endIndex, quote)) > index) {
-					value.Write (output, index, nextIndex - index);
-					index = nextIndex;
-				}
 			}
 
 			output.Write (quote);
@@ -155,10 +150,10 @@ namespace HtmlKit {
 		/// <para><paramref name="value"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <para><paramref name="startIndex"/> and <paramref name="count"/> do not specify
-		/// a valid range in the value.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="quote"/> is not a valid quote character.</para>
+		/// <paramref name="startIndex"/> and <paramref name="count"/> do not specify
+		/// a valid range in the value.
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="quote"/> is not a valid quote character.
 		/// </exception>
 		public static void HtmlAttributeEncode (TextWriter output, char[] value, int startIndex, int count, char quote = '"')
 		{
@@ -175,7 +170,7 @@ namespace HtmlKit {
 				throw new ArgumentOutOfRangeException ("count");
 
 			if (quote != '"' && quote != '\'')
-				throw new ArgumentOutOfRangeException ("quote");
+				throw new ArgumentException ("quote");
 
 			HtmlAttributeEncode (output, new CharArray (value), startIndex, count, quote);
 		}
@@ -195,10 +190,11 @@ namespace HtmlKit {
 		/// <paramref name="value"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <para><paramref name="startIndex"/> and <paramref name="count"/> do not specify
-		/// a valid range in the value.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="quote"/> is not a valid quote character.</para>
+		/// <paramref name="startIndex"/> and <paramref name="count"/> do not specify
+		/// a valid range in the value.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="quote"/> is not a valid quote character.
 		/// </exception>
 		public static string HtmlAttributeEncode (char[] value, int startIndex, int count, char quote = '"')
 		{
@@ -212,7 +208,7 @@ namespace HtmlKit {
 				throw new ArgumentOutOfRangeException ("count");
 
 			if (quote != '"' && quote != '\'')
-				throw new ArgumentOutOfRangeException ("quote");
+				throw new ArgumentException ("quote");
 
 			var encoded = new StringBuilder ();
 
@@ -239,10 +235,11 @@ namespace HtmlKit {
 		/// <para><paramref name="value"/> is <c>null</c>.</para>
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <para><paramref name="startIndex"/> and <paramref name="count"/> do not specify
-		/// a valid range in the value.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="quote"/> is not a valid quote character.</para>
+		/// <paramref name="startIndex"/> and <paramref name="count"/> do not specify
+		/// a valid range in the value.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="quote"/> is not a valid quote character.
 		/// </exception>
 		public static void HtmlAttributeEncode (TextWriter output, string value, int startIndex, int count, char quote = '"')
 		{
@@ -259,7 +256,7 @@ namespace HtmlKit {
 				throw new ArgumentOutOfRangeException ("count");
 
 			if (quote != '"' && quote != '\'')
-				throw new ArgumentOutOfRangeException ("quote");
+				throw new ArgumentException ("quote");
 
 			HtmlAttributeEncode (output, new CharString (value), startIndex, count, quote);
 		}
@@ -278,7 +275,7 @@ namespace HtmlKit {
 		/// <para>-or-</para>
 		/// <para><paramref name="value"/> is <c>null</c>.</para>
 		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <exception cref="System.ArgumentException">
 		/// <paramref name="quote"/> is not a valid quote character.
 		/// </exception>
 		public static void HtmlAttributeEncode (TextWriter output, string value, char quote = '"')
@@ -290,7 +287,7 @@ namespace HtmlKit {
 				throw new ArgumentNullException ("value");
 
 			if (quote != '"' && quote != '\'')
-				throw new ArgumentOutOfRangeException ("quote");
+				throw new ArgumentException ("quote");
 
 			HtmlAttributeEncode (output, new CharString (value), 0, value.Length, quote);
 		}
@@ -310,10 +307,11 @@ namespace HtmlKit {
 		/// <paramref name="value"/> is <c>null</c>.
 		/// </exception>
 		/// <exception cref="System.ArgumentOutOfRangeException">
-		/// <para><paramref name="startIndex"/> and <paramref name="count"/> do not specify
-		/// a valid range in the value.</para>
-		/// <para>-or-</para>
-		/// <para><paramref name="quote"/> is not a valid quote character.</para>
+		/// <paramref name="startIndex"/> and <paramref name="count"/> do not specify
+		/// a valid range in the value.
+		/// </exception>
+		/// <exception cref="System.ArgumentException">
+		/// <paramref name="quote"/> is not a valid quote character.
 		/// </exception>
 		public static string HtmlAttributeEncode (string value, int startIndex, int count, char quote = '"')
 		{
@@ -327,7 +325,7 @@ namespace HtmlKit {
 				throw new ArgumentOutOfRangeException ("count");
 
 			if (quote != '"' && quote != '\'')
-				throw new ArgumentOutOfRangeException ("quote");
+				throw new ArgumentException ("quote");
 
 			var encoded = new StringBuilder ();
 
@@ -349,7 +347,7 @@ namespace HtmlKit {
 		/// <exception cref="System.ArgumentNullException">
 		/// <paramref name="value"/> is <c>null</c>.
 		/// </exception>
-		/// <exception cref="System.ArgumentOutOfRangeException">
+		/// <exception cref="System.ArgumentException">
 		/// <paramref name="quote"/> is not a valid quote character.
 		/// </exception>
 		public static string HtmlAttributeEncode (string value, char quote = '"')
@@ -358,7 +356,7 @@ namespace HtmlKit {
 				throw new ArgumentNullException ("value");
 
 			if (quote != '"' && quote != '\'')
-				throw new ArgumentOutOfRangeException ("quote");
+				throw new ArgumentException ("quote");
 
 			var encoded = new StringBuilder ();
 
@@ -371,16 +369,15 @@ namespace HtmlKit {
 		static int IndexOfHtmlEncodeChar (ICharArray value, int startIndex, int endIndex)
 		{
 			for (int i = startIndex; i < endIndex; i++) {
-				switch (value[i]) {
+				char c = value[i];
+
+				switch (c) {
+				case '\t': case '\r': case '\n': case '\f': break;
 				case '\'': case '"': case '&': case '<': case '>':
 					return i;
 				default:
-					if (value[i] >= 160 && value[i] < 256)
+					if (c < 32 || c >= 127)
 						return i;
-
-					if (char.IsSurrogate (value[i]))
-						return i;
-
 					break;
 				}
 			}
@@ -400,7 +397,7 @@ namespace HtmlKit {
 
 			while (index < endIndex) {
 				char c = data[index++];
-				int unichar, nextIndex;
+				int unichar;
 
 				switch (c) {
 				case '\t': case '\r': case '\n': case '\f': output.Write (c); break;
@@ -433,14 +430,6 @@ namespace HtmlKit {
 
 					output.Write (string.Format (CultureInfo.InvariantCulture, "&#{0};", unichar));
 					break;
-				}
-
-				if (index >= endIndex)
-					break;
-
-				if ((nextIndex = IndexOfHtmlEncodeChar (data, index, endIndex)) > index) {
-					data.Write (output, index, nextIndex - index);
-					index = nextIndex;
 				}
 			}
 		}
