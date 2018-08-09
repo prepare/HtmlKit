@@ -29,12 +29,18 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\HtmlKit\HtmlKit.Net45.csproj">
+      <Project>{ABD20493-27A5-42F0-A8B9-BD1EA292F417}</Project>
+      <Name>HtmlKit.Net45</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HtmlAttributeTests.cs" />
@@ -42,16 +48,16 @@
     <Compile Include="HtmlEntityDecoderTests.cs" />
     <Compile Include="HtmlWriterTests.cs" />
     <Compile Include="HtmlUtilsTests.cs" />
+    <Compile Include="HtmlTokenTests.cs" />
   </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <None Include="TestData\html\badly-quoted-attr.html" />
+    <None Include="TestData\html\badly-quoted-attr.tokens" />
     <None Include="TestData\html\blocked.html" />
     <None Include="TestData\html\blocked.tokens" />
     <None Include="TestData\html\cdata.html" />
     <None Include="TestData\html\cdata.tokens" />
-    <None Include="TestData\html\HtmlEntities.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Include="TestData\html\HtmlEntities.json" />
     <None Include="TestData\html\papercut.html" />
     <None Include="TestData\html\papercut.tokens" />
     <None Include="TestData\html\papercut-4.4.html" />
@@ -68,13 +74,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\HtmlKit\HtmlKit.csproj">
-      <Project>{065C4D91-32E7-442D-8884-CEA2BC3DF4E9}</Project>
-      <Name>HtmlKit</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="TestData\" />
     <Folder Include="TestData\html\" />
   </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

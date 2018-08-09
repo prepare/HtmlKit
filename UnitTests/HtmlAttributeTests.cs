@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
-// Copyright (c) 2015-2016 Xamarin Inc. (www.xamarin.com)
+// Copyright (c) 2015-2018 Xamarin Inc. (www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -41,6 +41,9 @@ namespace UnitTests {
 			Assert.Throws<ArgumentNullException> (() => new HtmlAttribute (null, string.Empty));
 			Assert.Throws<ArgumentException> (() => new HtmlAttribute (string.Empty, string.Empty));
 			Assert.Throws<ArgumentException> (() => new HtmlAttribute ("a b c", string.Empty));
+
+			//Assert.Throws<ArgumentNullException> (() => new HtmlAttribute (null));
+			//Assert.Throws<ArgumentException> (() => new HtmlAttribute (string.Empty));
 		}
 	}
 }

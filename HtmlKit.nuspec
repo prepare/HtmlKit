@@ -1,28 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
-	<metadata minClientVersion="2.8.6">
-		<id>HtmlKit</id>
-		<version>1.0.0</version>
-		<title>HtmlKit</title>
-		<authors>Jeffrey Stedfast</authors>
-		<owners>Jeffrey Stedfast</owners>
-		<licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
-		<projectUrl>http://github.com/jstedfast/HtmlKit</projectUrl>
-		<requireLicenseAcceptance>false</requireLicenseAcceptance>
-		<description>HtmlKit is a cross-platform .NET framework for parsing HTML.</description>
-		<summary>HtmlKit is a cross-platform .NET framework for parsing HTML.</summary>
-		<releaseNotes>
-</releaseNotes>
-		<copyright>Xamarin Inc.</copyright>
-		<language>en-US</language>
-		<tags>html parser</tags>
-		<frameworkAssemblies>
-		</frameworkAssemblies>
-	<dependencies>
-	</dependencies>
-	</metadata>
-	<files>
-		<file src="HtmlKit\bin\Release\HtmlKit.dll" target="lib\portable-net45+win8+wp8\HtmlKit.dll" />
-		<file src="HtmlKit\bin\Release\HtmlKit.xml" target="lib\portable-net45+win8+wp8\HtmlKit.xml" />
-	</files>
+  <metadata minClientVersion="2.12">
+    <id>HtmlKit</id>
+    <version>1.0.2</version>
+    <title>HtmlKit</title>
+    <authors>Jeffrey Stedfast</authors>
+    <owners>Jeffrey Stedfast</owners>
+    <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
+    <projectUrl>http://github.com/jstedfast/HtmlKit</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>HtmlKit is a cross-platform .NET framework for parsing HTML.</description>
+    <summary>HtmlKit is a cross-platform .NET framework for parsing HTML.</summary>
+    <releaseNotes>
+    </releaseNotes>
+    <copyright>Xamarin Inc.</copyright>
+    <language>en-US</language>
+    <tags>html parser net45 netstandard netstandard1.0 netstandard1.3 netstandard1.6 netstandard2.0</tags>
+    <frameworkAssemblies>
+    </frameworkAssemblies>
+    <dependencies>
+      <group targetFramework="net45" />
+      <group targetFramework=".NETStandard1.0">
+	<dependency id="NETStandard.Library" version="1.6.1" />
+      </group>
+      <group targetFramework=".NETStandard1.3">
+	<dependency id="NETStandard.Library" version="1.6.1" />
+      </group>
+      <group targetFramework=".NETStandard1.6">
+	<dependency id="NETStandard.Library" version="1.6.1" />
+      </group>
+      <group targetFramework=".NETStandard2.0">
+	<dependency id="NETStandard.Library" version="1.6.1" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="HtmlKit\bin\Release\net45\HtmlKit.dll" target="lib\net45\HtmlKit.dll" />
+    <file src="HtmlKit\bin\Release\net45\HtmlKit.xml" target="lib\net45\HtmlKit.xml" />
+    <file src="HtmlKit\bin\Release\netstandard1.0\HtmlKit.dll" target="lib\netstandard1.0\HtmlKit.dll" />
+    <file src="HtmlKit\bin\Release\netstandard1.0\HtmlKit.xml" target="lib\netstandard1.0\HtmlKit.xml" />
+    <file src="HtmlKit\bin\Release\netstandard1.3\HtmlKit.dll" target="lib\netstandard1.3\HtmlKit.dll" />
+    <file src="HtmlKit\bin\Release\netstandard1.3\HtmlKit.xml" target="lib\netstandard1.3\HtmlKit.xml" />
+    <file src="HtmlKit\bin\Release\netstandard1.6\HtmlKit.dll" target="lib\netstandard1.6\HtmlKit.dll" />
+    <file src="HtmlKit\bin\Release\netstandard1.6\HtmlKit.xml" target="lib\netstandard1.6\HtmlKit.xml" />
+    <file src="HtmlKit\bin\Release\netstandard2.0\HtmlKit.dll" target="lib\netstandard2.0\HtmlKit.dll" />
+    <file src="HtmlKit\bin\Release\netstandard2.0\HtmlKit.xml" target="lib\netstandard2.0\HtmlKit.xml" />
+  </files>
 </package>

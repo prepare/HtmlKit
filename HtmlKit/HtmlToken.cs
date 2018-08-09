@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
-// Copyright (c) 2015-2016 Xamarin Inc. (www.xamarin.com)
+// Copyright (c) 2015-2018 Xamarin Inc. (www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -111,7 +111,7 @@ namespace HtmlKit {
 		public HtmlCommentToken (string comment, bool bogus = false) : base (HtmlTokenKind.Comment)
 		{
 			if (comment == null)
-				throw new ArgumentNullException ("comment");
+				throw new ArgumentNullException (nameof (comment));
 
 			IsBogusComment = bogus;
 			Comment = comment;
@@ -139,6 +139,10 @@ namespace HtmlKit {
 			get; private set;
 		}
 
+		internal bool IsBangComment {
+			get; set;
+		}
+
 		/// <summary>
 		/// Write the HTML comment to a <see cref="System.IO.TextWriter"/>.
 		/// </summary>
@@ -152,7 +156,7 @@ namespace HtmlKit {
 		public override void WriteTo (TextWriter output)
 		{
 			if (output == null)
-				throw new ArgumentNullException ("output");
+				throw new ArgumentNullException (nameof (output));
 
 			if (!IsBogusComment) {
 				output.Write ("<!--");
@@ -160,6 +164,8 @@ namespace HtmlKit {
 				output.Write ("-->");
 			} else {
 				output.Write ('<');
+				if (IsBangComment)
+					output.Write ('!');
 				output.Write (Comment);
 				output.Write ('>');
 			}
@@ -191,7 +197,7 @@ namespace HtmlKit {
 		protected HtmlDataToken (HtmlTokenKind kind, string data) : base (kind)
 		{
 			switch (kind) {
-			default: throw new ArgumentOutOfRangeException ("kind");
+			default: throw new ArgumentOutOfRangeException (nameof (kind));
 			case HtmlTokenKind.ScriptData:
 			case HtmlTokenKind.CData:
 			case HtmlTokenKind.Data:
@@ -199,7 +205,7 @@ namespace HtmlKit {
 			}
 
 			if (data == null)
-				throw new ArgumentNullException ("data");
+				throw new ArgumentNullException (nameof (data));
 
 			Data = data;
 		}
@@ -217,7 +223,7 @@ namespace HtmlKit {
 		public HtmlDataToken (string data) : base (HtmlTokenKind.Data)
 		{
 			if (data == null)
-				throw new ArgumentNullException ("data");
+				throw new ArgumentNullException (nameof (data));
 
 			Data = data;
 		}
@@ -251,7 +257,7 @@ namespace HtmlKit {
 		public override void WriteTo (TextWriter output)
 		{
 			if (output == null)
-				throw new ArgumentNullException ("output");
+				throw new ArgumentNullException (nameof (output));
 
 			if (!EncodeEntities) {
 				output.Write (Data);
@@ -298,7 +304,7 @@ namespace HtmlKit {
 		public override void WriteTo (TextWriter output)
 		{
 			if (output == null)
-				throw new ArgumentNullException ("output");
+				throw new ArgumentNullException (nameof (output));
 
 			output.Write ("<![CDATA[");
 			output.Write (Data);
@@ -342,7 +348,7 @@ namespace HtmlKit {
 		public override void WriteTo (TextWriter output)
 		{
 			if (output == null)
-				throw new ArgumentNullException ("output");
+				throw new ArgumentNullException (nameof (output));
 
 			output.Write (Data);
 		}
@@ -373,10 +379,10 @@ namespace HtmlKit {
 		public HtmlTagToken (string name, IEnumerable<HtmlAttribute> attributes, bool isEmptyElement) : base (HtmlTokenKind.Tag)
 		{
 			if (name == null)
-				throw new ArgumentNullException ("name");
+				throw new ArgumentNullException (nameof (name));
 
 			if (attributes == null)
-				throw new ArgumentNullException ("attributes");
+				throw new ArgumentNullException (nameof (attributes));
 
 			Attributes = new HtmlAttributeCollection (attributes);
 			IsEmptyElement = isEmptyElement;
@@ -398,7 +404,7 @@ namespace HtmlKit {
 		public HtmlTagToken (string name, bool isEndTag) : base (HtmlTokenKind.Tag)
 		{
 			if (name == null)
-				throw new ArgumentNullException ("name");
+				throw new ArgumentNullException (nameof (name));
 
 			Attributes = new HtmlAttributeCollection ();
 			Id = name.ToHtmlTagId ();
@@ -474,7 +480,7 @@ namespace HtmlKit {
 		public override void WriteTo (TextWriter output)
 		{
 			if (output == null)
-				throw new ArgumentNullException ("output");
+				throw new ArgumentNullException (nameof (output));
 
 			output.Write ('<');
 			if (IsEndTag)
@@ -618,7 +624,7 @@ namespace HtmlKit {
 		public override void WriteTo (TextWriter output)
 		{
 			if (output == null)
-				throw new ArgumentNullException ("output");
+				throw new ArgumentNullException (nameof (output));
 
 			output.Write ("<!");
 			output.Write (RawTagName);

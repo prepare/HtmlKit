@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
-// Copyright (c) 2015-2016 Xamarin Inc. (www.xamarin.com)
+// Copyright (c) 2015-2018 Xamarin Inc. (www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -97,7 +97,7 @@ namespace HtmlKit {
 			int index = (int) value;
 
 			if (index < 0 || index >= NamespaceValues.Length)
-				throw new ArgumentOutOfRangeException ("value");
+				throw new ArgumentOutOfRangeException (nameof (value));
 
 			return NamespaceValues[index];
 		}
@@ -113,7 +113,7 @@ namespace HtmlKit {
 		public static HtmlNamespace ToHtmlNamespace (this string ns)
 		{
 			if (ns == null)
-				throw new ArgumentNullException ("ns");
+				throw new ArgumentNullException (nameof (ns));
 
 			if (!ns.StartsWith ("http://www.w3.org/", StringComparison.OrdinalIgnoreCase))
 				return HtmlNamespace.Html;

@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
-// Copyright (c) 2015-2016 Xamarin Inc. (www.xamarin.com)
+// Copyright (c) 2015-2018 Xamarin Inc. (www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -202,6 +202,35 @@ namespace UnitTests {
 
 			AssertHtmlAttributeEncode (text, attributeValue);
 			AssertHtmlEncode (text, encoded);
+		}
+
+		[Test]
+		public void TestHtmlDecode ()
+		{
+			const string encoded = "&lt;&pound;&euro;&cent;&yen;&nbsp;&copy;&reg;&gt;";
+			const string expected = "<£€¢¥\u00a0©®>";
+
+			var decoded = HtmlUtils.HtmlDecode (encoded);
+
+			Assert.AreEqual (expected, decoded);
+		}
+
+		[Test]
+		public void TestHtmlNamespaces ()
+		{
+			string nullspace = null;
+
+			Assert.Throws<ArgumentNullException> (() => nullspace.ToHtmlNamespace ());
+
+			Assert.AreEqual (HtmlNamespace.Html, "does not exist".ToHtmlNamespace ());
+
+			Assert.Throws<ArgumentOutOfRangeException> (() => ((HtmlNamespace) 500).ToNamespaceUrl ());
+
+			foreach (HtmlNamespace ns in Enum.GetValues (typeof (HtmlNamespace))) {
+				var value = ns.ToNamespaceUrl ().ToHtmlNamespace ();
+
+				Assert.AreEqual (ns, value);
+			}
 		}
 	}
 }

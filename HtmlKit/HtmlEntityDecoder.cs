@@ -3,7 +3,7 @@
 //
 // Author: Jeffrey Stedfast <jeff@xamarin.com>
 //
-// Copyright (c) 2015-2016 Xamarin Inc. (www.xamarin.com)
+// Copyright (c) 2015-2018 Xamarin Inc. (www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -36,10 +36,11 @@ namespace HtmlKit {
 	public partial class HtmlEntityDecoder
 	{
 		readonly char[] pushed;
-		int index, state;
+		readonly int[] states;
 		bool numeric;
 		byte digits;
 		byte xbase;
+		int index;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="HtmlKit.HtmlEntityDecoder"/> class.
@@ -50,6 +51,7 @@ namespace HtmlKit {
 		public HtmlEntityDecoder ()
 		{
 			pushed = new char[MaxEntityLength];
+			states = new int[MaxEntityLength];
 		}
 
 		bool PushNumericEntity (char c)
@@ -58,8 +60,10 @@ namespace HtmlKit {
 
 			if (xbase == 0) {
 				if (c == 'X' || c == 'x') {
-					pushed[index++] = c;
+					states[index] = 0;
+					pushed[index] = c;
 					xbase = 16;
+					index++;
 					return true;
 				}
 
@@ -86,6 +90,8 @@ namespace HtmlKit {
 			if (v >= (int) xbase)
 				return false;
 
+			int state = states[index - 1];
+
 			// check for overflow
 			if (state > int.MaxValue / xbase)
 				return false;
@@ -94,8 +100,10 @@ namespace HtmlKit {
 				return false;
 
 			state = (state * xbase) + v;
-			pushed[index++] = c;
+			states[index] = state;
+			pushed[index] = c;
 			digits++;
+			index++;
 
 			return true;
 		}
@@ -116,9 +124,11 @@ namespace HtmlKit {
 		{
 			if (index == 0) {
 				if (c != '&')
-					throw new ArgumentOutOfRangeException ("c", "The first character that is pushed MUST be the '&' character.");
+					throw new ArgumentOutOfRangeException (nameof (c), "The first character that is pushed MUST be the '&' character.");
 
-				pushed[index++] = '&';
+				pushed[index] = '&';
+				states[index] = 0;
+				index++;
 				return true;
 			}
 
@@ -129,8 +139,10 @@ namespace HtmlKit {
 				return false;
 
 			if (index == 1 && c == '#') {
-				pushed[index++] = '#';
+				pushed[index] = '#';
+				states[index] = 0;
 				numeric = true;
+				index++;
 				return true;
 			}
 
@@ -141,6 +153,8 @@ namespace HtmlKit {
 		{
 			if (digits == 0)
 				return new string (pushed, 0, index);
+
+			int state = states[index - 1];
 
 			// the following states are parse errors
 			switch (state) {
@@ -224,7 +238,6 @@ namespace HtmlKit {
 			digits = 0;
 			xbase = 0;
 			index = 0;
-			state = 0;
 		}
 	}
 }
